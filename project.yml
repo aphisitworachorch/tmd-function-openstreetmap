@@ -1,0 +1,9 @@
+packages:
+  - name: weather
+    environment:
+      TMD_API_KEY: "${TMD_API_KEY}"
+      TMD_API_ENDPOINT: "${TMD_API_ENDPOINT}"
+      NOMINATIM_API_ENDPOINT: "${NOMINATIM_API_ENDPOINT}"
+    actions:
+      - name: get
+        runtime: 'go:default'

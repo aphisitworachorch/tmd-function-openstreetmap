@@ -1,0 +1,14 @@
+[
+  {
+    "apihost": "https://faas-sgp1-18bc02ac.doserverless.co",
+    "namespace": "fn-199f1361-e138-4655-b29e-5b115cf0621e",
+    "packageVersions": {},
+    "actionVersions": {
+      "weather/get": {
+        "digest": "f0dfea8e7ad66118d249c7bafffa5b78546eedc80e32cd20a6343a08eb825dc0",
+        "version": "0.0.3"
+      }
+    },
+    "webHashes": {}
+  }
+]
