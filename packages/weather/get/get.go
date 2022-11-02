@@ -64,18 +64,19 @@ type PackedResponse struct {
 type Condition int
 
 const (
-	CLEAR         Condition = 1
-	PARTLY_CLOUDY Condition = 2
-	CLOUDY        Condition = 3
-	OVERCAST      Condition = 4
-	LIGHT_RAIN    Condition = 5
-	MODERATE_RAIN Condition = 6
-	HEAVY_RAIN    Condition = 7
-	THUNDERSTORM  Condition = 8
-	VERY_COLD     Condition = 9
-	COLD          Condition = 10
-	COOL          Condition = 11
-	VERY_HOT      Condition = 12
+	NO Condition = iota
+	CLEAR
+	PARTLY_CLOUDY
+	CLOUDY
+	OVERCAST
+	LIGHT_RAIN
+	MODERATE_RAIN
+	HEAVY_RAIN
+	THUNDERSTORM
+	VERY_COLD
+	COLD
+	COOL
+	VERY_HOT
 )
 
 type PrettyResponse struct {
