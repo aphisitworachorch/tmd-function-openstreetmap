@@ -61,29 +61,11 @@ type PackedResponse struct {
 	Data PrettyResponse `json:"data"`
 }
 
-type Condition int
-
-const (
-	NO Condition = iota
-	CLEAR
-	PARTLY_CLOUDY
-	CLOUDY
-	OVERCAST
-	LIGHT_RAIN
-	MODERATE_RAIN
-	HEAVY_RAIN
-	THUNDERSTORM
-	VERY_COLD
-	COLD
-	COOL
-	VERY_HOT
-)
-
 type PrettyResponse struct {
 	Temperature      float64   `json:"temperature"`
 	RelativeHumidity float64   `json:"relative_humidity"`
 	RainPercentage   int       `json:"rain_percentage"`
-	Condition        Condition `json:"condition"`
+	Condition        string    `json:"condition"`
 	Time             time.Time `json:"timestamp"`
 	WindSpeed        float64   `json:"wind_speed"'`
 	WindDirection    float64   `json:"wind_direction"`
@@ -192,7 +174,7 @@ func Main(ipt Input) (*Response, error) {
 	prettyResponse.Location.Lat, _ = strconv.ParseFloat(ipt.Lat, 64)
 	prettyResponse.Location.Lon, _ = strconv.ParseFloat(ipt.Lon, 64)
 	prettyResponse.Time = result.WeatherForecasts[0].Forecasts[0].Time
-	prettyResponse.Condition = Condition(result.WeatherForecasts[0].Forecasts[0].Data.Cond)
+	prettyResponse.Condition = []string{"CLEAR", "PARTLY_CLOUDY", "CLOUDY", "OVERCAST", "LIGHT_RAIN", "MODERATE_RAIN", "HEAVY_RAIN", "THUNDERSTORM", "VERY_COLD", "COLD", "COOL", "VERY_HOT"}[result.WeatherForecasts[0].Forecasts[0].Data.Cond]
 	prettyResponse.Location.Address = nominatimF.Address
 	prettyResponse.Location.DisplayName = nominatimF.DisplayName
 	prettyResponse.RainPercentage = result.WeatherForecasts[0].Forecasts[0].Data.Rain
