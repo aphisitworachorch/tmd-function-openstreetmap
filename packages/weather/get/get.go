@@ -174,7 +174,7 @@ func Main(ipt Input) (*Response, error) {
 	prettyResponse.Location.Lat, _ = strconv.ParseFloat(ipt.Lat, 64)
 	prettyResponse.Location.Lon, _ = strconv.ParseFloat(ipt.Lon, 64)
 	prettyResponse.Time = result.WeatherForecasts[0].Forecasts[0].Time
-	prettyResponse.Condition = []string{"CLEAR", "PARTLY_CLOUDY", "CLOUDY", "OVERCAST", "LIGHT_RAIN", "MODERATE_RAIN", "HEAVY_RAIN", "THUNDERSTORM", "VERY_COLD", "COLD", "COOL", "VERY_HOT"}[result.WeatherForecasts[0].Forecasts[0].Data.Cond]
+	prettyResponse.Condition = []string{"CLEAR", "PARTLY_CLOUDY", "CLOUDY", "OVERCAST", "LIGHT_RAIN", "MODERATE_RAIN", "HEAVY_RAIN", "THUNDERSTORM", "VERY_COLD", "COLD", "COOL", "VERY_HOT"}[result.WeatherForecasts[0].Forecasts[0].Data.Cond+1]
 	prettyResponse.Location.Address = nominatimF.Address
 	prettyResponse.Location.DisplayName = nominatimF.DisplayName
 	prettyResponse.RainPercentage = result.WeatherForecasts[0].Forecasts[0].Data.Rain
