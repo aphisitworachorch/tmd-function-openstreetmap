@@ -69,6 +69,7 @@ type PrettyResponse struct {
 	Time             time.Time `json:"timestamp"`
 	WindSpeed        float64   `json:"wind_speed"'`
 	WindDirection    float64   `json:"wind_direction"`
+	Pressure	 float64   `json:"pressure"`
 	Location         struct {
 		Lat         float64                `json:"lat"`
 		Lon         float64                `json:"lon"`
@@ -180,6 +181,7 @@ func Main(ipt Input) (*Response, error) {
 	prettyResponse.Location.DisplayName = nominatimF.DisplayName
 	prettyResponse.RainPercentage = result.WeatherForecasts[0].Forecasts[0].Data.Rain
 	prettyResponse.RelativeHumidity = result.WeatherForecasts[0].Forecasts[0].Data.Rh
+	prettyResponse.Pressure = result.WeatherForecasts[0].Forecasts[0].Data.Slp
 	prettyResponse.WindSpeed = result.WeatherForecasts[0].Forecasts[0].Data.Ws10M
 	prettyResponse.WindDirection = result.WeatherForecasts[0].Forecasts[0].Data.Wd10M
 
