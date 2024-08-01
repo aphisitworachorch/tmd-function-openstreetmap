@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -67,7 +67,7 @@ type PrettyResponse struct {
 	RainPercentage   int       `json:"rain_percentage"`
 	Condition        string    `json:"condition"`
 	Time             time.Time `json:"timestamp"`
-	WindSpeed        float64   `json:"wind_speed"'`
+	WindSpeed        float64   `json:"wind_speed"`
 	WindDirection    float64   `json:"wind_direction"`
 	Location         struct {
 		Lat         float64                `json:"lat"`
@@ -98,67 +98,61 @@ func Main(ipt Input) (*Response, error) {
 	/**
 	Begin to URL Parsing and Add Query
 	*/
-	url, err := url.Parse(os.Getenv("TMD_API_ENDPOINT") + "/forecast/location/hourly/at")
-	q := url.Query()
+	urls, err := url.Parse(os.Getenv("TMD_API_ENDPOINT") + "/forecast/location/hourly/at")
+	q := urls.Query()
 	q.Add("lat", ipt.Lat)
 	q.Add("lon", ipt.Lon)
 	q.Add("fields", "tc,rh,slp,rain,ws10m,wd10m,cloudlow,cloudmed,cloudhigh,cond")
-	url.RawQuery = q.Encode()
-
-	if err != nil {
-		response.Body = nil
-		response.StatusCode = http.StatusInternalServerError
-	}
+	urls.RawQuery = q.Encode()
 
 	/**
 	Begin to Nominatim OpenStreetMap API
 	*/
-	nominatim, err2 := url.Parse(os.Getenv("NOMINATIM_API_ENDPOINT") + "/reverse")
-	query := url.Query()
+	nominatim, err := url.Parse(os.Getenv("NOMINATIM_API_ENDPOINT") + "/reverse")
+	query := urls.Query()
 	query.Add("lat", ipt.Lat)
 	query.Add("lon", ipt.Lon)
 	query.Add("format", "json")
 	nominatim.RawQuery = query.Encode()
-
-	if err2 != nil {
-		response.Body = nil
-		response.StatusCode = http.StatusInternalServerError
-	}
-	nominatimReq, err3 := http.NewRequest("GET", nominatim.String(), nil)
-	nominatimRes, err3 := client.Do(nominatimReq)
-	if err3 != nil {
-		response.Body = nil
-		response.StatusCode = http.StatusInternalServerError
-	}
-	nominatimFinal, err := ioutil.ReadAll(nominatimRes.Body)
-	if err != nil {
-		response.Body = nil
-		response.StatusCode = http.StatusInternalServerError
-	}
+	nominatimReq, err := http.NewRequest("GET", nominatim.String(), nil)
+	nominatimRes, err := client.Do(nominatimReq)
+	nominatimFinal, err := io.ReadAll(nominatimRes.Body)
 	var nominatimF NominatimRes
 	if err := json.Unmarshal(nominatimFinal, &nominatimF); err != nil {
 		response.Body = nil
 		response.StatusCode = http.StatusInternalServerError
+		return &Response{
+			Body:       response.Body,
+			StatusCode: response.StatusCode,
+		}, nil
 	}
 
 	/**
 	Begin HTTP Request
 	*/
-	req, err := http.NewRequest("GET", url.String(), nil)
-	req.Header.Add("Authorization", "Bearer "+os.Getenv("TMD_API_KEY"))
-	resp, err := client.Do(req)
+	reqs, err := http.NewRequest("GET", urls.String(), nil)
+	reqs.Header.Add("Authorization", "Bearer "+os.Getenv("TMD_API_KEY"))
+	resp, err := client.Do(reqs)
 	if err != nil {
 		response.Body = nil
 		response.StatusCode = http.StatusInternalServerError
+		return &Response{
+			Body:       response.Body,
+			StatusCode: response.StatusCode,
+		}, nil
 	}
 
 	/**
 	Parsing Body by IOUtil
 	*/
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		response.Body = nil
 		response.StatusCode = http.StatusInternalServerError
+		return &Response{
+			Body:       response.Body,
+			StatusCode: response.StatusCode,
+		}, nil
 	}
 
 	/**
@@ -168,6 +162,10 @@ func Main(ipt Input) (*Response, error) {
 	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
 		response.Body = nil
 		response.StatusCode = http.StatusInternalServerError
+		return &Response{
+			Body:       response.Body,
+			StatusCode: response.StatusCode,
+		}, nil
 	}
 
 	var prettyResponse PrettyResponse
